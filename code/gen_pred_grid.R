@@ -7,7 +7,6 @@ source("code/set_control_params.R")
 
 # list of all datasets
 erddap <- c(
-  #"erdFedRockfishStation"
   "FED_Rockfish_Catch"
 )
 
