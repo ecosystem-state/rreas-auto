@@ -25,7 +25,8 @@ jobs:
       - uses: r-lib/actions/setup-r@v1
       - name: Install package dependencies
         run:
-          Rscript -e "install.packages(c('remotes','rerddap','dplyr','lubridate','sf','sessioninfo'))"
+          Rscript -e "install.packages(c('remotes','rerddap','dplyr','lubridate','sessioninfo'))"
+          Rscript -e "install.packages(c('sf'),type='binary')"
       - name: Create prediction grid
         run:
           Rscript -e "source('code/gen_pred_grid.R')"
