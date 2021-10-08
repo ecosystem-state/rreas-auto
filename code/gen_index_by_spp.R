@@ -199,7 +199,7 @@ for (i in 1:length(unique_files)) {
     }
   }
 }
-all_pred$year = as.numeric(all_pred$year)
+all_pred$year = as.numeric(as.character(all_pred$year))
 saveRDS(all_pred, "indices/predicted_indices.rds")
 
 # Filter out experimental stations
