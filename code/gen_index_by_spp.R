@@ -19,13 +19,13 @@ pred_grid <- readRDS("indices/pred_grid.rds")
 
 # model function - edit to change form of model
 gam_pres_fit <- function(df) {
-  gam(pres ~ jday + s(latitude, longitude) + year +I(jday^2),
+  gam(pres ~ jday + s(latitude, longitude) + as.factor(year) +I(jday^2),
       data = df,
       family = "binomial"
   )
 }
 gam_pos_fit <- function(df) {
-  gam(count ~ jday + s(latitude, longitude) + year +I(jday^2),
+  gam(count ~ jday + s(latitude, longitude) + as.factor(year) +I(jday^2),
       data = df[which(df$count > 0),],
       family = "poisson"
   )
