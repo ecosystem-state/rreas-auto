@@ -50,6 +50,10 @@ for (i in 1:length(unique_files)) {
       "strata","station"
     )
   )
+  rreas_stations <- dplyr::group_by(dat, station) %>%
+    dplyr::summarise(latitude = latitude[1],
+                     longitude = longitude[1])
+  write.csv(rreas_stations, "data/rreas_stations.csv", row.names = FALSE)
   # filter out species in question
   #species <- dplyr::filter(tot_cpue, erddap == unique_files[i])
   #dat <- dplyr::filter(station_dat,
