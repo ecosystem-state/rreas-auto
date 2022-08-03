@@ -1,4 +1,4 @@
-library(mgcv)
+library(sdmTMB)
 library(rerddap)
 library(dplyr)
 library(lubridate)
@@ -18,18 +18,18 @@ tot_cpue <- readRDS("indices/tot_cpue_species.rds")
 pred_grid <- readRDS("indices/pred_grid.rds")
 
 # model function - edit to change form of model
-gam_pres_fit <- function(df) {
-  gam(pres ~ jday + s(latitude, longitude) + as.factor(year) +I(jday^2),
-      data = df,
-      family = "binomial"
-  )
-}
-gam_pos_fit <- function(df) {
-  gam(count ~ jday + s(latitude, longitude) + as.factor(year) +I(jday^2),
-      data = df[which(df$count > 0),],
-      family = "poisson"
-  )
-}
+# gam_pres_fit <- function(df) {
+#   gam(pres ~ jday + s(latitude, longitude) + as.factor(year) +I(jday^2),
+#       data = df,
+#       family = "binomial"
+#   )
+# }
+# gam_pos_fit <- function(df) {
+#   gam(count ~ jday + s(latitude, longitude) + as.factor(year) +I(jday^2),
+#       data = df[which(df$count > 0),],
+#       family = "poisson"
+#   )
+# }
 
 # grab data for all species
 unique_files <- unique(tot_cpue$erddap)
@@ -143,39 +143,54 @@ for (i in 1:length(unique_files)) {
     dat$year <- as.factor(dat$year)
     new_grid$year <- as.factor(new_grid$year)
 
-    # nest fitted and predicted data
-    dat_nested <-
-      dat %>%
-      dplyr::rename(species = common_name) %>%
-      dplyr::group_by(species) %>%
-      nest()
-    dat_nested <- dat_nested %>% dplyr::rename(myorigdata = data)
+    for(spp in 1:length(unique(dat$common_name))) {
+      sub <- dplyr::filter(dat, common_name == unique(dat$common_name)[spp])
+      if(spp==1) {
+        mesh = make_mesh(sub, xy_cols = c("longitude","latitude"),
+                       cutoff = 50)
+      }
+      sub$fyear = as.factor(sub$year)
+      m <- sdmTMB(count ~ -1 + fyear + s(jday),
+                  spatiotemporal = "off",
+                  time="year",
+                  spatial="on",
+                  family = delta_truncated_nbinom2(),
+                  mesh=mesh,
+                  data=sub)
+    }
 
-    # create second dataset - predictions
-    pred_nested <-
-      group_by(new_grid, species) %>%
-      tidyr::nest() %>%
-      dplyr::rename(mynewdata = data)
+    # # nest fitted and predicted data
+    # dat_nested <-
+    #   dat %>%
+    #   dplyr::rename(species = common_name) %>%
+    #   nest(-species) %>%
+    #   rename(myorigdata = data)
+    #
+    # # create second dataset - predictions
+    # pred_nested <-
+    #   new_grid %>%
+    #   nest(-species) %>%
+    #   rename(mynewdata = data)
 
     # fit presence-absence GAMs
-    predictions_pres <-
-      dat_nested %>%
-      mutate(my_model = map(myorigdata, gam_pres_fit)) %>%
-      full_join(pred_nested, by = "species") %>%
-      mutate(my_new_pred = map2(my_model, mynewdata, predict)) %>%
-      select(species, mynewdata, my_new_pred) %>%
-      unnest(mynewdata, my_new_pred)# %>%
+    # predictions_pres <-
+    #   dat_nested %>%
+    #   mutate(my_model = map(myorigdata, gam_pres_fit)) %>%
+    #   full_join(pred_nested, by = "species") %>%
+    #   mutate(my_new_pred = map2(my_model, mynewdata, predict)) %>%
+    #   select(species, mynewdata, my_new_pred) %>%
+    #   unnest(mynewdata, my_new_pred)# %>%
       #dplyr::group_by(species, year) %>%
       #dplyr::summarise(index = log(sum(exp(my_new_pred)))) %>%
       #as.data.frame()
 
-    predictions_pos <-
-      dat_nested %>%
-      mutate(my_model = map(myorigdata, gam_pos_fit)) %>%
-      full_join(pred_nested, by = "species") %>%
-      mutate(my_new_pred = map2(my_model, mynewdata, predict)) %>%
-      select(species, mynewdata, my_new_pred) %>%
-      unnest(mynewdata, my_new_pred) #%>%
+    # predictions_pos <-
+    #   dat_nested %>%
+    #   mutate(my_model = map(myorigdata, gam_pos_fit)) %>%
+    #   full_join(pred_nested, by = "species") %>%
+    #   mutate(my_new_pred = map2(my_model, mynewdata, predict)) %>%
+    #   select(species, mynewdata, my_new_pred) %>%
+    #   unnest(mynewdata, my_new_pred) #%>%
       #dplyr::group_by(species, year) %>%
       #dplyr::summarise(index = log(sum(exp(my_new_pred)))) %>%
       #as.data.frame()
