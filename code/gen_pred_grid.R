@@ -53,7 +53,7 @@ dat = dplyr::filter(dat, latitude < lat_max, latitude > lat_min)
 # make the UTM cols spatial (X/Easting/lon, Y/Northing/lat)
 dat <- st_as_sf(dat, coords = c("longitude", "latitude"), crs = 4326)
 # transform to UTM
-dat<-st_transform(x = dat, crs = 32610)
+dat<- st_transform(x = dat, crs = 32610)
 dat$longitude = st_coordinates(dat)[,1]
 dat$latitude = st_coordinates(dat)[,2]
 
@@ -66,7 +66,7 @@ resolution <- pred_resolution
 dat$floor_lon <- floor(dat$longitude / resolution)
 dat$floor_lat <- floor(dat$latitude / resolution)
 dat$station <- paste(dat$floor_lon, dat$floor_lat)
-#
+
 pred_grid <- expand.grid(
   station = unique(dat$station),
   year = unique(dat$year)
