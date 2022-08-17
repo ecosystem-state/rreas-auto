@@ -2,7 +2,6 @@ library(rerddap)
 
 source("code/set_control_params.R")
 
-
 out <- info(as.character("FED_Rockfish_Catch"))
 dat <- tabledap(
   out,
