@@ -1,10 +1,8 @@
 library(dplyr)
 library(lubridate)
-library(sf)
+library(sp)
 
 source("code/set_control_params.R")
-
-out <- info(as.character(erddap[i]))
 
 station_dat <- readRDS("data/raw_data.rds")
 
@@ -19,21 +17,28 @@ dat$yday <- lubridate::yday(dat$date)
 spp <- unique(dat$sci_name)[1]
 dat = dplyr::filter(dat,
                     sci_name == spp)
-dat$latitude <- as.numeric(dat$latitude)
-dat$longitude <- as.numeric(dat$longitude)
+dat$latitude <- dat$lat_dd <- as.numeric(dat$latitude)
+dat$longitude <- dat$lon_dd <- as.numeric(dat$longitude)
 dat = dplyr::filter(dat, latitude < lat_max, latitude > lat_min)
 
-# convert to UTM - kms
-# make the UTM cols spatial (X/Easting/lon, Y/Northing/lat)
-dat <- st_as_sf(dat, coords = c("longitude", "latitude"), crs = 4326)
-# transform to UTM
-dat<- st_transform(x = dat, crs = 32610)
-dat$longitude = st_coordinates(dat)[,1]
-dat$latitude = st_coordinates(dat)[,2]
-
+coordinates(dat) <- c("longitude", "latitude")
+proj4string(dat) <- CRS("+proj=longlat +datum=WGS84")
+dat <- spTransform(dat, CRS("+proj=utm +zone=10"))
 dat <- as.data.frame(dat)
-dat$longitude <- dat$longitude / 1000
-dat$latitude <- dat$latitude / 1000
+dat$longitude <- dat$longitude/1000 # scale units to km
+dat$latitude <- dat$latitude/1000
+# don't rely on sf because of install issues
+# # convert to UTM - kms
+# # make the UTM cols spatial (X/Easting/lon, Y/Northing/lat)
+# dat <- st_as_sf(dat, coords = c("longitude", "latitude"), crs = 4326)
+# # transform to UTM
+# dat<- st_transform(x = dat, crs = 32610)
+# dat$longitude = st_coordinates(dat)[,1]
+# dat$latitude = st_coordinates(dat)[,2]
+#
+# dat <- as.data.frame(dat)
+# dat$longitude <- dat$longitude / 1000
+# dat$latitude <- dat$latitude / 1000
 
 # come up with prediction grid
 resolution <- pred_resolution
