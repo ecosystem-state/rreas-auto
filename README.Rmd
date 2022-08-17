@@ -20,7 +20,7 @@ knitr::opts_chunk$set(
   
   [![Make grid](https://github.com/ecosystem-state/rreas-auto/workflows/R-make-grid/badge.svg)](https://github.com/ecosystem-state/rreas-auto/actions)  
   
-  [![Species list](https://github.com/ecosystem-state/rreas-auto/workflows/R-make-spp-list/badge.svg)](https://github.com/ecosystem-state/rreas-auto/actions)
+  [![Species list](https://github.com/ecosystem-state/rreas-auto/workflows/R-pull-data/badge.svg)](https://github.com/ecosystem-state/rreas-auto/actions)
   
   [![Estimate densities](https://github.com/ecosystem-state/rreas-auto/workflows/R-make-indices/badge.svg)](https://github.com/ecosystem-state/rreas-auto/actions)  
   [![Run DFA models](https://github.com/ecosystem-state/rreas-auto/workflows/R-run-dfa/badge.svg)](https://github.com/ecosystem-state/rreas-auto/actions)
