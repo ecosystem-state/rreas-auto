@@ -89,3 +89,4 @@ station_dat <- dplyr::group_by(station_dat, name) %>%
 dat <- station_dat
 
 saveRDS(dat, "indices/tot_cpue_species.rds")
+

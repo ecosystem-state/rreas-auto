@@ -35,7 +35,6 @@ dat$latitude <- dat$latitude/1000
 # dat<- st_transform(x = dat, crs = 32610)
 # dat$longitude = st_coordinates(dat)[,1]
 # dat$latitude = st_coordinates(dat)[,2]
-#
 # dat <- as.data.frame(dat)
 # dat$longitude <- dat$longitude / 1000
 # dat$latitude <- dat$latitude / 1000
