@@ -1,10 +1,21 @@
 library(rerddap)
-library(dplyr)
-library(lubridate)
 
-# settings
 source("code/set_control_params.R")
-#
+
+
+out <- info(as.character("FED_Rockfish_Catch"))
+dat <- tabledap(
+  out,
+  fields = c(
+    "common_name", "latitude",
+    "longitude", "maturity",
+    "sci_name", "species_group",
+    "station_bottom_depth","time",
+    "catch","cruise", "haul_no",
+    "strata","station"
+  )
+)
+
 rreas_erddap <- "erddap	species
 FED_Rockfish_Catch	Diaphus theta
 FED_Rockfish_Catch	Doryteuthis opalescens
@@ -52,31 +63,19 @@ FED_Rockfish_Catch	Sebastes spp. mel-flav complex
 FED_Rockfish_Catch	Sebastes spp. caurinus complex"
 rreas = read.table(textConnection(rreas_erddap), header=TRUE, sep="\t")
 
-# grab data for all species
-out <- info(as.character(rreas$erddap[1]))
-  # station_dat <- tabledap(out, fields = c(
-  #   "station", "line", "latitude",
-  #   "longitude", "time", "scientific_name", "larvae_10m2"
-  # ))
-station_dat <- tabledap(out,
-                          fields = c(
-                            "common_name", "latitude",
-                            "longitude", "maturity",
-                            "sci_name", "species_group",
-                            "station_bottom_depth","time",
-                            "catch"
-                          )
-  )
+dat <- dplyr::filter(dat, sci_name %in% rreas$species)
+saveRDS(dat, "data/raw_data.rds")
 
-  station_dat <- as.data.frame(station_dat)
-  station_dat$date <- lubridate::as_date(station_dat$time)
-  station_dat$year <- lubridate::year(station_dat$date)
-  station_dat$month <- lubridate::month(station_dat$date)
-  station_dat$yday <- lubridate::yday(station_dat$date)
 
-  # filter out recent years with consistent sampling
-  #station_dat <- dplyr::filter(station_dat, year >= min_year)
-  # format response
+station_dat <- as.data.frame(dat)
+station_dat$date <- lubridate::as_date(station_dat$time)
+station_dat$year <- lubridate::year(station_dat$date)
+station_dat$month <- lubridate::month(station_dat$date)
+station_dat$yday <- lubridate::yday(station_dat$date)
+
+# filter out recent years with consistent sampling
+#station_dat <- dplyr::filter(station_dat, year >= min_year)
+# format response
 station_dat$catch <- as.numeric(station_dat$catch)
 station_dat$catch[which(is.na(station_dat$larvae_10m2))] <- 0
 
@@ -85,14 +84,8 @@ station_dat$file = rreas$erddap[1]
 station_dat <- dplyr::group_by(station_dat, name) %>%
   dplyr::summarize(tot_cpue = sum(catch),
                    sci_name = sci_name[1],
-                     erddap = file[1])
+                   erddap = file[1])
 
-if (i == 1) {
-  dat <- station_dat
-} else {
-  dat <- rbind(dat, station_dat)
-}
-
-dat <- dplyr::filter(dat, sci_name %in% rreas$species)
+dat <- station_dat
 
 saveRDS(dat, "indices/tot_cpue_species.rds")

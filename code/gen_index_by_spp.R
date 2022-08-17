@@ -1,5 +1,4 @@
 library(mgcv)
-library(rerddap)
 library(dplyr)
 library(lubridate)
 library(sf)
@@ -32,28 +31,12 @@ gam_pos_fit <- function(df) {
 }
 
 # grab data for all species
-unique_files <- unique(tot_cpue$erddap)
-for (i in 1:length(unique_files)) {
-  out <- info(as.character(unique_files[i]))
-  # station_dat <- tabledap(out, fields = c(
-  #   "station", "line", "latitude",
-  #   "longitude", "time", "scientific_name", "larvae_10m2"
-  # ))
-  dat <- tabledap(
-    out,
-    fields = c(
-      "common_name", "latitude",
-      "longitude", "maturity",
-      "sci_name", "species_group",
-      "station_bottom_depth","time",
-      "catch","cruise", "haul_no",
-      "strata","station"
-    )
-  )
-  rreas_stations <- dplyr::group_by(dat, station) %>%
+dat <- readRDS("data/raw_data.rds")
+
+rreas_stations <- dplyr::group_by(dat, station) %>%
     dplyr::summarise(latitude = latitude[1],
                      longitude = longitude[1])
-  write.csv(rreas_stations, "data/rreas_stations.csv", row.names = FALSE)
+write.csv(rreas_stations, "data/rreas_stations.csv", row.names = FALSE)
   # filter out species in question
   #species <- dplyr::filter(tot_cpue, erddap == unique_files[i])
   #dat <- dplyr::filter(station_dat,
@@ -121,7 +104,7 @@ for (i in 1:length(unique_files)) {
     dplyr::filter(tot > 0) %>%
     dplyr::select(-tot)
 
-  if (nrow(dat) > 0) {
+if (nrow(dat) > 0) {
     # expand predicted grid to have separate rows for each spp
     new_grid <-
       expand.grid(
@@ -197,13 +180,10 @@ for (i in 1:length(unique_files)) {
                        n_pos_catch = length(which(count > 0)))
     predictions_all <- dplyr::left_join(pred_all, summaries)
 
-    if (i == 1) {
-      all_pred <- predictions_all
-    } else {
-      all_pred <- rbind(all_pred, predictions_all)
-    }
+
+    all_pred <- predictions_all
   }
-}
+
 all_pred$year = as.numeric(as.character(all_pred$year))
 saveRDS(all_pred, "indices/predicted_indices.rds")
 

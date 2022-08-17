@@ -1,46 +1,20 @@
-library(rerddap)
 library(dplyr)
 library(lubridate)
 library(sf)
 
 source("code/set_control_params.R")
 
-# list of all datasets
-erddap <- c(
-  "FED_Rockfish_Catch"
-)
+out <- info(as.character(erddap[i]))
 
-# grab data for all species
-for (i in 1:length(erddap)) {
-  out <- info(as.character(erddap[i]))
-  # station_dat <- tabledap(out, fields = c(
-  #   "station", "line", "latitude",
-  #   "longitude", "time", "scientific_name", "larvae_10m2"
-  # ))
-  station_dat <- tabledap(out,
-    fields = c(
-      "common_name", "latitude",
-      "longitude", "maturity",
-      "sci_name", "species_group",
-      "station_bottom_depth","time"
-    )
-  )
+station_dat <- readRDS("data/raw_data.rds")
 
-  if (i == 1) {
-    dat <- station_dat
-  } else {
-    dat <- rbind(dat, station_dat)
-  }
-}
+dat <- station_dat
 
 dat <- as.data.frame(dat)
 dat$date <- lubridate::as_date(dat$time)
 dat$year <- lubridate::year(dat$date)
 dat$month <- lubridate::month(dat$date)
 dat$yday <- lubridate::yday(dat$date)
-
-# filter out recent years with consistent sampling
-#dat <- dplyr::filter(dat, year >= min_year)
 
 spp <- unique(dat$sci_name)[1]
 dat = dplyr::filter(dat,
