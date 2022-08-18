@@ -25,7 +25,12 @@ jobs:
         #sudo port install gdal
       - name: Install packages
         run:
-          Rscript -e "install.packages(c('dplyr', 'lubridate', 'remotes', 'sp', 'sessioninfo', 'rgdal'), type="binary")"
+          Rscript -e "install.packages(c('dplyr', 'lubridate', 'remotes', 'sp', 'sessioninfo'))"
+      - name: Install dependencies # see https://github.com/r-spatial/sf/issues/1566
+        run: |
+          remotes::install_deps(dependencies = TRUE, type="binary")
+        shell: Rscript {0}
+       shell: Rscript {0}
       - name: Create prediction grid
         run:
           Rscript -e "source('code/gen_pred_grid.R')"
