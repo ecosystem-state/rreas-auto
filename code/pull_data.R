@@ -43,7 +43,6 @@ FED_Rockfish_Catch	Sebastes hopkinsi
 FED_Rockfish_Catch	Sebastes jordani
 FED_Rockfish_Catch	Sebastes levis
 FED_Rockfish_Catch	Sebastes melanops
-FED_Rockfish_Catch	Sebastes melanostomus
 FED_Rockfish_Catch	Sebastes miniatus
 FED_Rockfish_Catch	Sebastes mystinus
 FED_Rockfish_Catch	Sebastes ovalis
@@ -63,6 +62,7 @@ FED_Rockfish_Catch	Sebastes wilsoni
 FED_Rockfish_Catch	Sebastes zacentrus
 FED_Rockfish_Catch	Sebastes spp. mel-flav complex
 FED_Rockfish_Catch	Sebastes spp. caurinus complex"
+# FED_Rockfish_Catch	Sebastes melanostomus
 rreas = read.table(textConnection(rreas_erddap), header=TRUE, sep="\t")
 
 dat <- dplyr::filter(dat, sci_name %in% rreas$species)
