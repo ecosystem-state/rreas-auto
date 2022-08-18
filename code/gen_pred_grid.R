@@ -3,6 +3,7 @@ library(lubridate)
 library(sp)
 
 source("code/set_control_params.R")
+
 station_dat <- readRDS("data/raw_data.rds")
 
 dat <- station_dat

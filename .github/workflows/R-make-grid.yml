@@ -20,20 +20,38 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: r-lib/actions/setup-r@v1
+
+      - name: "[Custom block] [macOS] Install spatial libraries"
+        if: runner.os == 'macOS'
+        run: |
+          # conflicts with gfortran from r-lib/actions when linking gcc
+          rm '/usr/local/bin/gfortran'
+          brew install pkg-config gdal proj geos sqlite3
+
+      - name: "[Stage] [macOS] Install libgit2"
+        if: runner.os == 'macOS'
+        run: brew install libgit2
+
+      - name: "[Stage] [macOS] Install system libs for pkgdown"
+        if: runner.os == 'macOS' && matrix.config.pkgdown != ''
+        run: brew install harfbuzz fribidi
+
       - name: Install packages
         run:
-          Rscript -e "install.packages(c('dplyr', 'lubridate', 'remotes', 'sp', 'sessioninfo'))"
-      - name: Install source dependencies # see https://github.com/r-spatial/sf/issues/1566
-        if: runner.os == 'Linux'
-        run: |
-          remotes::install_deps(dependencies = TRUE)
-        shell: Rscript {0}
+          Rscript -e "install.packages(c('dplyr', 'lubridate', 'remotes', 'sp', 'sessioninfo', 'rgdal'))"
 
-      - name: Install binary dependencies
-        if: runner.os != 'Linux'
-        run: |
-          remotes::install_deps(dependencies = TRUE, type="binary")
-        shell: Rscript {0}
+
+      # - name: Install source dependencies # see https://github.com/r-spatial/sf/issues/1566
+      #   if: runner.os == 'Linux'
+      #   run: |
+      #     remotes::install_deps(dependencies = TRUE)
+      #   shell: Rscript {0}
+      #
+      # - name: Install binary dependencies
+      #   if: runner.os != 'Linux'
+      #   run: |
+      #     remotes::install_deps(dependencies = TRUE, type="binary")
+      #   shell: Rscript {0}
 
       - name: Create prediction grid
         run:
