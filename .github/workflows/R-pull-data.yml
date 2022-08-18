@@ -15,7 +15,7 @@ on:
 name: R-pull-data
 
 jobs:
-  gen-spp-list:
+  pull-data:
     runs-on: macos-latest
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
