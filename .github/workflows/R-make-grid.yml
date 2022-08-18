@@ -4,10 +4,10 @@ on:
   schedule:
   #    # * is a special character in YAML so you have to quote this string
     - cron:  '0 0 1 1,7 *'
-#  push:
-#       paths:
-#       - 'code/set_control_params.R'
-#       - 'code/gen_pred_grid.R'
+  push:
+       paths:
+       - 'code/set_control_params.R'
+       - 'code/gen_pred_grid.R'
     #branches: [main, master]
   #pull_request:
     #branches: [main, master]
@@ -23,11 +23,12 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: r-lib/actions/setup-r@v1
-      - name: Restore packages
-        shell: Rscript {0}
+      - name: Install gdal
         run: |
-          if (!requireNamespace("renv", quietly = TRUE)) install.packages("renv")
-          renv::restore()
+        sudo port install gdal
+      - name: Install packages
+        run:
+          Rscript -e "install.packages(c('dplyr', 'lubridate', 'remotes', 'sp', 'sessioninfo'))"
       - name: Create prediction grid
         run:
           Rscript -e "source('code/gen_pred_grid.R')"
