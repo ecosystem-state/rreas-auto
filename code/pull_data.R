@@ -1,6 +1,7 @@
 library(rerddap)
 library(dplyr)
 library(lubridate)
+library(sf)
 
 source("code/set_control_params.R")
 
@@ -65,8 +66,22 @@ FED_Rockfish_Catch	Sebastes spp. caurinus complex"
 rreas = read.table(textConnection(rreas_erddap), header=TRUE, sep="\t")
 
 dat <- dplyr::filter(dat, sci_name %in% rreas$species)
-saveRDS(dat, "data/raw_data.rds")
 
+# add lat lon as UTM
+dat$latitude <- dat$lat_dd <- as.numeric(dat$latitude)
+dat$longitude <- dat$lon_dd <- as.numeric(dat$longitude)
+dat = dplyr::filter(dat, latitude < lat_max, latitude > lat_min)
+
+dat <- st_as_sf(dat, coords = c("longitude", "latitude"), crs = 4326)
+# # transform to UTM
+dat<- st_transform(x = dat, crs = 32610)
+dat$longitude = st_coordinates(dat)[,1]
+dat$latitude = st_coordinates(dat)[,2]
+dat <- as.data.frame(dat)
+dat$longitude <- dat$longitude / 1000
+dat$latitude <- dat$latitude / 1000
+
+saveRDS(dat, "data/raw_data.rds")
 
 station_dat <- as.data.frame(dat)
 station_dat$date <- lubridate::as_date(station_dat$time)

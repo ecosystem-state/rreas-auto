@@ -21,17 +21,9 @@ jobs:
       - uses: actions/checkout@v2
       - uses: r-lib/actions/setup-r@v1
 
-      - name: "[Custom block] [macOS] Install spatial libraries"
-        if: runner.os == 'macOS'
-        run: |
-          # conflicts with gfortran from r-lib/actions when linking gcc
-          rm '/usr/local/bin/gfortran'
-          brew install pkg-config gdal proj geos sqlite3
-
       - name: Install packages
         run:
-          Rscript -e "install.packages(c('dplyr', 'lubridate', 'remotes', 'sp', 'sessioninfo', 'rgdal'))"
-
+          Rscript -e "install.packages(c('dplyr', 'lubridate', 'remotes', 'sessioninfo'))"
 
       # - name: Install source dependencies # see https://github.com/r-spatial/sf/issues/1566
       #   if: runner.os == 'Linux'

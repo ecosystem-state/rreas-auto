@@ -28,9 +28,16 @@ jobs:
       #  run: |
       #    if (!requireNamespace("renv", quietly = TRUE)) install.packages("renv")
       #    renv::restore()
+      - name: "[Custom block] [macOS] Install spatial libraries"
+        if: runner.os == 'macOS'
+        run: |
+          # conflicts with gfortran from r-lib/actions when linking gcc
+          rm '/usr/local/bin/gfortran'
+          brew install pkg-config gdal proj geos sqlite3
+
       - name: Install packages
         run:
-          Rscript -e "install.packages(c('dplyr', 'rerddap', 'remotes', 'lubridate', 'sessioninfo'))"
+          Rscript -e "install.packages(c('dplyr', 'rerddap', 'remotes', 'sf', 'lubridate', 'sessioninfo','rgdal'))"
       - name: Pull data
         run:
           Rscript -e "source('code/pull_data.R')"
