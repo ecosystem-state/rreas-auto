@@ -62,4 +62,3 @@ plot_fitted(fit, names = abbr_names, time_labels = unique(dat$year)) +
   theme(strip.background =element_rect(fill="white")) +
   theme(strip.text.x = element_text(size = 8))
 dev.off()
-
