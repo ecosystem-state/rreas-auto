@@ -7,7 +7,6 @@ source("code/set_control_params.R")
 station_dat <- readRDS("data/raw_data.rds")
 
 dat <- station_dat
-
 dat <- as.data.frame(dat)
 dat$date <- lubridate::as_date(dat$time)
 dat$year <- lubridate::year(dat$date)
