@@ -2,11 +2,10 @@
 
 <!-- badges: start -->
 
+[![R-pull-data](https://github.com/ecosystem-state/rreas-auto/actions/workflows/R-pull-data.yml/badge.svg)](https://github.com/ecosystem-state/rreas-auto/actions/workflows/R-pull-data.yml)
+
 [![Make
 grid](https://github.com/ecosystem-state/rreas-auto/workflows/R-make-grid/badge.svg)](https://github.com/ecosystem-state/rreas-auto/actions)
-
-[![Species
-list](https://github.com/ecosystem-state/rreas-auto/workflows/R-make-spp-list/badge.svg)](https://github.com/ecosystem-state/rreas-auto/actions)
 
 [![Estimate
 densities](https://github.com/ecosystem-state/rreas-auto/workflows/R-make-indices/badge.svg)](https://github.com/ecosystem-state/rreas-auto/actions)  
