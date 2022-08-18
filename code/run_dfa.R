@@ -9,7 +9,6 @@ dat <- readRDS("indices/predicted_indices.rds")
 #dat <- dplyr::group_by(dat, species) %>%
 #  dplyr::mutate(n = length(which(mean_cpue==0))) %>%
 #  dplyr::filter(n <= max_zeros)
-
 # turn all mean_cpue values to NAs
 #dat$index[which(dat$mean_cpue==0)] = NA
 
