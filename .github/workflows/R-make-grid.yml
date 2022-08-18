@@ -25,7 +25,7 @@ jobs:
           Rscript -e "install.packages(c('dplyr', 'lubridate', 'remotes', 'sp', 'sessioninfo'))"
       - name: Install dependencies # see https://github.com/r-spatial/sf/issues/1566
         run: |
-          remotes::install_deps(dependencies = TRUE, type="binary")
+          remotes::install_deps(dependencies = TRUE, type="binary", updgrade = "always")
         shell: Rscript {0}
       - name: Create prediction grid
         run:
