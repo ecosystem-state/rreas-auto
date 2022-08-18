@@ -29,7 +29,7 @@ gam_pos_fit <- function(df) {
       family = "poisson"
   )
   } else {
-    gam(count ~ jday + s(latitude, longitude) +I(jday^2),
+    gam(count ~ 1,
         data = df[which(df$count > 0),],
         family = "poisson"
     )
