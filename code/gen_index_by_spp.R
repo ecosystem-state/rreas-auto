@@ -23,10 +23,17 @@ gam_pres_fit <- function(df) {
   )
 }
 gam_pos_fit <- function(df) {
+  if(length(unique(df$year[which(df$pres == 1)])) > 1) {
   gam(count ~ jday + s(latitude, longitude) + as.factor(year) +I(jday^2),
       data = df[which(df$count > 0),],
       family = "poisson"
   )
+  } else {
+    gam(count ~ jday + s(latitude, longitude) +I(jday^2),
+        data = df[which(df$count > 0),],
+        family = "poisson"
+    )
+  }
 }
 
 # grab data for all species
