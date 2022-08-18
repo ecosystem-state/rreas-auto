@@ -72,11 +72,11 @@ dat$latitude <- dat$lat_dd <- as.numeric(dat$latitude)
 dat$longitude <- dat$lon_dd <- as.numeric(dat$longitude)
 dat = dplyr::filter(dat, latitude < lat_max, latitude > lat_min)
 
-dat <- st_as_sf(dat, coords = c("longitude", "latitude"), crs = 4326)
+spatial_dat <- st_as_sf(dat[,c("longitude","latitude")], coords = c("longitude", "latitude"), crs = 4326)
 # # transform to UTM
-dat<- st_transform(x = dat, crs = 32610)
-dat$longitude = st_coordinates(dat)[,1]
-dat$latitude = st_coordinates(dat)[,2]
+spatial_dat<- st_transform(x = spatial_dat, crs = 32610)
+dat$longitude = st_coordinates(spatial_dat)[,1]
+dat$latitude = st_coordinates(spatial_dat)[,2]
 dat <- as.data.frame(dat)
 dat$longitude <- dat$longitude / 1000
 dat$latitude <- dat$latitude / 1000
