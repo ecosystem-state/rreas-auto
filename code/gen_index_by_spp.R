@@ -1,7 +1,6 @@
 library(mgcv)
 library(dplyr)
 library(lubridate)
-library(sp)
 library(tidyr)
 library(purrr)
 
@@ -37,10 +36,6 @@ rreas_stations <- dplyr::group_by(dat, station) %>%
     dplyr::summarise(latitude = latitude[1],
                      longitude = longitude[1])
 write.csv(rreas_stations, "data/rreas_stations.csv", row.names = FALSE)
-  # filter out species in question
-  #species <- dplyr::filter(tot_cpue, erddap == unique_files[i])
-  #dat <- dplyr::filter(station_dat,
-  #                     sci_name %in% tot_cpue$sci_name)
 
   # convert date
   dat <- as.data.frame(dat)
@@ -48,31 +43,6 @@ write.csv(rreas_stations, "data/rreas_stations.csv", row.names = FALSE)
   dat$year <- lubridate::year(dat$date)
   dat$month <- lubridate::month(dat$date)
   dat$jday <- lubridate::yday(dat$date)
-
-  dat$latitude <- dat$lat_dd <- as.numeric(dat$latitude)
-  dat$longitude <- dat$lon_dd <- as.numeric(dat$longitude)
-  dat = dplyr::filter(dat, latitude < lat_max, latitude > lat_min)
-
-  coordinates(dat) <- c("longitude", "latitude")
-  proj4string(dat) <- CRS("+proj=longlat +datum=WGS84")
-  dat <- spTransform(dat, CRS("+proj=utm +zone=10"))
-  dat <- as.data.frame(dat)
-  dat$longitude <- dat$longitude/1000 # scale units to km
-  dat$latitude <- dat$latitude/1000
-  # convert to UTM - kms
-  # make the UTM cols spatial (X/Easting/lon, Y/Northing/lat)
-  #dat$latitude <- as.numeric(dat$latitude)
-  #dat$longitude <- as.numeric(dat$longitude)
-  #dat <-
-  #  st_as_sf(dat,
-  #           coords = c("longitude", "latitude"),
-  #           crs = 4326)
-  #dat <- st_transform(x = dat, crs = 32610)
-  #dat$longitude = st_coordinates(dat)[, 1]
-  #dat$latitude = st_coordinates(dat)[, 2]
-  #dat <- as.data.frame(dat)
-  #dat$longitude <- dat$longitude / 1000 # to kms
-  #dat$latitude <- dat$latitude / 1000 # to kms
 
   dat$uniqueID<-do.call(paste, c(dat[c("cruise", "haul_no")], sep = "_"))
 
