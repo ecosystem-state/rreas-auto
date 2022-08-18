@@ -3,6 +3,7 @@ library(lubridate)
 library(sp)
 
 source("code/set_control_params.R")
+
 station_dat <- readRDS("data/raw_data.rds")
 
 dat <- station_dat
@@ -54,3 +55,4 @@ station_df$latitude <- as.numeric(unlist(lapply(strsplit(as.character(station_df
 pred_grid <- dplyr::left_join(pred_grid, station_df)
 
 saveRDS(pred_grid, "indices/pred_grid.rds")
+
