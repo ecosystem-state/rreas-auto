@@ -22,6 +22,7 @@ gam_pres_fit <- function(df) {
       family = "binomial"
   )
 }
+
 gam_pos_fit <- function(df) {
   if(length(unique(df$year[which(df$pres == 1)])) > 1) {
   gam(count ~ jday + s(latitude, longitude) + as.factor(year) +I(jday^2),
