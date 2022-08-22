@@ -2,9 +2,10 @@ library(rerddap)
 library(dplyr)
 library(lubridate)
 library(sf)
+library(getip)
 
 source("code/set_control_params.R")
-
+print(getip())
 out <- info(as.character("FED_Rockfish_Catch"))
 dat <- tabledap(
   out,
