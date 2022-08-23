@@ -1,8 +1,11 @@
 library(dplyr)
 library(lubridate)
+library(usethis)
 
 source("code/set_control_params.R")
-station_dat <- readRDS("data/raw_data.rds")
+url_str <- "https://github.com/ecosystem-state/ecodata/blob/main/inst/rreas_index_data.rds"
+usethis::use_github_file(url_str,
+                         save_as = "data/raw_data.rds")
 
 dat <- station_dat
 dat <- as.data.frame(dat)

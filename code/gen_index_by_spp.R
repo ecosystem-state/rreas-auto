@@ -3,9 +3,17 @@ library(dplyr)
 library(lubridate)
 library(tidyr)
 library(purrr)
+library(usethis)
 
 # settings
 source("code/set_control_params.R")
+
+url_str <- "https://github.com/ecosystem-state/ecodata/blob/main/inst/rreas_index_data.rds"
+usethis::use_github_file(url_str,
+                         save_as = "data/raw_data.rds")
+url_str <- "https://github.com/ecosystem-state/ecodata/blob/main/inst/tot_cpue_rreas.rds"
+usethis::use_github_file(url_str,
+                         save_as = "indices/tot_cpue_species.rds")
 
 # load species tot cpue
 tot_cpue <- readRDS("indices/tot_cpue_species.rds")
