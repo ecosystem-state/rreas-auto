@@ -7,7 +7,7 @@ url_str <- "https://github.com/ecosystem-state/ecodata/blob/main/inst/rreas_inde
 usethis::use_github_file(url_str,
                          save_as = "data/raw_data.rds")
 
-dat <- station_dat
+dat <- readRDS("data/raw_data.rds")
 dat <- as.data.frame(dat)
 dat$date <- lubridate::as_date(dat$time)
 dat$year <- lubridate::year(dat$date)
